@@ -1,4 +1,4 @@
-package dbaas_rest_api
+package main
 
 func main() {
 	a := App{}

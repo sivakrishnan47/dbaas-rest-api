@@ -1,4 +1,4 @@
-package dbaas_rest_api
+package main
 
 import (
 	"database/sql"
@@ -10,10 +10,14 @@ import (
 	"strconv"
 	"encoding/json"
 )
+
+// App declaration
 type App struct {
 	Router *mux.Router
 	DB     *sql.DB
 }
+
+// Initialize : App initialization
 func (a *App) Initialize(user, password, dbname string) {
 	connectionString := fmt.Sprintf("%s:%s@/%s", user, password, dbname)
 	var err error
@@ -24,6 +28,8 @@ func (a *App) Initialize(user, password, dbname string) {
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 }
+
+// Run : App execution
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }

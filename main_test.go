@@ -1,4 +1,4 @@
-package dbaas_rest_api
+package main
 import (
 	"os"
 	"log"
@@ -13,7 +13,7 @@ import (
 var a App
 func TestMain(m *testing.M) {
 	a = App{}
-	a.Initialize("root", "root", "rest_api_example")
+	a.Initialize("root", "", "rest_api_example")
 	ensureTableExists()
 	code := m.Run()
 	clearTable()

@@ -1,4 +1,4 @@
-package dbaas_rest_api
+package main
 import (
 	"database/sql"
 	"fmt"
