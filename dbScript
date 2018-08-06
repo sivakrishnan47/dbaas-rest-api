@@ -1,0 +1,21 @@
+CREATE TABLE db_type (
+  id int NOT NULL AUTO_INCREMENT,
+  name varchar(50) NOT NULL,
+  PRIMARY KEY (id)
+)
+INSERT INTO db_type(name)VALUES('MYSQL');
+INSERT INTO db_type(name)VALUES('MONGODB');
+
+CREATE TABLE dbs (
+  id int NOT NULL AUTO_INCREMENT,
+  typeID int NOT NULL,
+  name varchar(50) NOT NULL,
+  ip varchar(15) NOT NULL,
+  dbPort int NOT NULL,
+  createdData timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY typeID (typeID),
+  CONSTRAINT dbs_fk_dbType FOREIGN KEY (typeID) REFERENCES db_type (id)
+)
+
+INSERT INTO dbs(typeID,name,ip,dbPort)VALUES(1,'DB1','127.0.0.1',8888)

@@ -1,53 +1,91 @@
+// model.go
+
 package main
+
 import (
-	"database/sql"
 	"fmt"
+	"database/sql"
 )
-type user struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Age   int    `json:"age"`
+
+type dataBase struct {
+	ID   int    `json:"id"`
+	TypeID int  `json:"typeID"`
+	Name string `json:"name"`
+	IP  string  `json:"ip"`
+	Port int	`json:port`
+	CreatedDate string `json:createdData`
 }
-func (u *user) getUser(db *sql.DB) error {
-	statement := fmt.Sprintf("SELECT name, age FROM users WHERE id=%d", u.ID)
-	return db.QueryRow(statement).Scan(&u.Name, &u.Age)
+
+type dataBaseType struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
-func (u *user) updateUser(db *sql.DB) error {
-	statement := fmt.Sprintf("UPDATE users SET name='%s', age=%d WHERE id=%d", u.Name, u.Age, u.ID)
+
+func (u *dataBase) deleteDatabase(db *sql.DB) error {
+	statement := fmt.Sprintf("DELETE FROM dbs WHERE id=%d", u.ID)
 	_, err := db.Exec(statement)
 	return err
 }
-func (u *user) deleteUser(db *sql.DB) error {
-	statement := fmt.Sprintf("DELETE FROM users WHERE id=%d", u.ID)
+
+func (u *dataBase) createDatabase(db *sql.DB) error {
+	statement := fmt.Sprintf("INSERT INTO dbs (typeID, name, ip, dbPort) VALUES (%d, '%s', '%s', %d)", u.TypeID, u.Name, u.IP, u.Port)
 	_, err := db.Exec(statement)
-	return err
-}
-func (u *user) createUser(db *sql.DB) error {
-	statement := fmt.Sprintf("INSERT INTO users(name, age) VALUES('%s', %d)", u.Name, u.Age)
-	_, err := db.Exec(statement)
+
 	if err != nil {
 		return err
 	}
+
 	err = db.QueryRow("SELECT LAST_INSERT_ID()").Scan(&u.ID)
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
-func getUsers(db *sql.DB, start, count int) ([]user, error) {
-	statement := fmt.Sprintf("SELECT id, name, age FROM users LIMIT %d OFFSET %d", count, start)
+
+func getDatabases(db *sql.DB, start, count int) ([]dataBase, error) {
+	statement := fmt.Sprintf("SELECT id, typeID, name, ip, dbPort, createdData FROM dbs LIMIT %d OFFSET %d", count, start)
 	rows, err := db.Query(statement)
+
 	if err != nil {
 		return nil, err
 	}
+
 	defer rows.Close()
-	users := []user{}
+
+	databases := []dataBase{}
+
 	for rows.Next() {
-		var u user
-		if err := rows.Scan(&u.ID, &u.Name, &u.Age); err != nil {
+		var u dataBase
+		if err := rows.Scan(&u.ID, &u.TypeID, &u.Name, &u.IP, &u.Port, &u.CreatedDate); err != nil {
 			return nil, err
 		}
-		users = append(users, u)
+		databases = append(databases, u)
 	}
-	return users, nil
+
+	return databases, nil
+}
+
+func getDatabaseTypes(db *sql.DB, start, count int) ([]dataBaseType, error) {
+	statement := fmt.Sprintf("SELECT ID, NAME FROM db_type LIMIT %d OFFSET %d", count, start)
+	rows, err := db.Query(statement)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	dataBaseTypes := []dataBaseType{}
+
+	for rows.Next() {
+		var u dataBaseType
+		if err := rows.Scan(&u.ID, &u.Name); err != nil {
+			return nil, err
+		}
+		dataBaseTypes = append(dataBaseTypes, u)
+	}
+
+	return dataBaseTypes, nil
 }

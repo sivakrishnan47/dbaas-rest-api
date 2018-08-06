@@ -9,7 +9,7 @@ services:
 - mysql
 
 before_install:
-- mysql -e 'CREATE DATABASE IF NOT EXISTS rest_api_example;'
+- mysql -e 'CREATE DATABASE IF NOT EXISTS dbaas;'
 
 install:
 - go get github.com/gorilla/mux
