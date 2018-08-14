@@ -1,16 +1,16 @@
 // app.go
 
-package main
+package app
 
 import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
+	"io/ioutil"
 	"net/http"
-	"strconv"
-
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/globalsign/mgo"
 	"github.com/gorilla/mux"
 )
 
@@ -30,6 +30,11 @@ func (a *App) Initialize(user, password, dbname string) {
 		log.Fatal(err)
 	}
 
+	//a.DB, err = sql.Open("mysql", connectionString)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 }
@@ -42,22 +47,11 @@ func (a *App) Run(addr string) {
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/db", a.getDatabases).Methods("GET")
 	a.Router.HandleFunc("/db", a.createDatabase).Methods("POST")
-	a.Router.HandleFunc("/db/{id:[0-9]+}", a.deleteDatabase).Methods("DELETE")
-	a.Router.HandleFunc("/types", a.getDatabaseTypes).Methods("GET")
+	a.Router.HandleFunc("/db/{database}", a.deleteDatabase).Methods("DELETE")
 }
 
 func (a *App) getDatabases(w http.ResponseWriter, r *http.Request) {
-	count, _ := strconv.Atoi(r.FormValue("count"))
-	start, _ := strconv.Atoi(r.FormValue("start"))
-
-	if count > 10 || count < 1 {
-		count = 10
-	}
-	if start < 0 {
-		start = 0
-	}
-
-	products, err := getDatabases(a.DB, start, count)
+	products, err := getDatabases(a.DB)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -67,17 +61,18 @@ func (a *App) getDatabases(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) createDatabase(w http.ResponseWriter, r *http.Request) {
-	var u dataBase
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&u); err != nil {
+	var u []dataBase
+	body,_ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err := json. Unmarshal(body,&u); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	defer r.Body.Close()
-
-	if err := u.createDatabase(a.DB); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
+	for i, _ := range u {
+		if err := u[i].createDatabase(a.DB); err != nil {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	respondWithJSON(w, http.StatusCreated, u)
@@ -85,39 +80,19 @@ func (a *App) createDatabase(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) deleteDatabase(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
+	database, err := vars["database"]
+	if !err {
 		respondWithError(w, http.StatusBadRequest, "Invalid Database ID")
 		return
 	}
 
-	u := dataBase{ID: id}
+	u := dataBase{Database: database}
 	if err := u.deleteDatabase(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
-}
-
-func (a *App) getDatabaseTypes(w http.ResponseWriter, r *http.Request) {
-	count, _ := strconv.Atoi(r.FormValue("count"))
-	start, _ := strconv.Atoi(r.FormValue("start"))
-
-	if count > 10 || count < 1 {
-		count = 10
-	}
-	if start < 0 {
-		start = 0
-	}
-
-	products, err := getDatabaseTypes(a.DB, start, count)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	respondWithJSON(w, http.StatusOK, products)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {

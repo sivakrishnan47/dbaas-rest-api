@@ -1,11 +1,14 @@
 // main.go
 
 package main
+import(
+	app "./app"
+)
 
 func main() {
-	a := App{}
+	a :=app.App{}
 
-	a.Initialize("root", "", "dbaas")
+	a.Initialize("root", "", "")
 
 	a.Run(":8080")
 }
