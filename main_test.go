@@ -176,7 +176,7 @@ func TestCreateDatabaseMongo(t *testing.T) {
 
 	response := executeRequest(request)
 	if response.Code != http.StatusCreated {
-		t.Errorf("Expected 200 response")
+		t.Errorf("Expected 201 response")
 	}
 }
 func TestDeleteDatabaseMongo(t *testing.T) {
