@@ -3,22 +3,22 @@
 package main
 
 import (
-	"fmt"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strconv"
 	"testing"
+
+	app "github.com/dbaas-rest-api/app"
 )
 
-var a App
+var mockApp app.App
 
 func TestMain(m *testing.M) {
-	a = App{}
-	a.Initialize("root", "", "dbaas")
 
 	ensureTableExists()
 
@@ -30,20 +30,20 @@ func TestMain(m *testing.M) {
 }
 
 func ensureTableExists() {
-	if _, err := a.DB.Exec(tableDBCreationQuery); err != nil {
+	if _, err := mockApp.DB.Exec(tableDBCreationQuery); err != nil {
 		log.Fatal(err)
 	}
-	if _, err := a.DB.Exec(tableDBTypeCreationQuery); err != nil {
+	if _, err := mockApp.DB.Exec(tableDBTypeCreationQuery); err != nil {
 		log.Fatal(err)
 	}
 }
 
 func clearTable() {
-	a.DB.Exec("DELETE FROM dbs")
-	a.DB.Exec("DELETE FROM db_type")
-	a.DB.Exec("ALTER TABLE dbs AUTO_INCREMENT = 1")
-	a.DB.Exec("ALTER TABLE db_type AUTO_INCREMENT = 1")
-	a.DB.Exec("INSERT INTO db_type(name)VALUES('MYSQL')")
+	mockApp.DB.Exec("DELETE FROM dbs")
+	mockApp.DB.Exec("DELETE FROM db_type")
+	mockApp.DB.Exec("ALTER TABLE dbs AUTO_INCREMENT = 1")
+	mockApp.DB.Exec("ALTER TABLE db_type AUTO_INCREMENT = 1")
+	mockApp.DB.Exec("INSERT INTO db_type(name)VALUES('MYSQL')")
 
 }
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS db_type (
   PRIMARY KEY (id)
 )`
 
-const tableDBTypeCreationQuery =  `
+const tableDBTypeCreationQuery = `
 CREATE TABLE IF NOT EXISTS dbs (
   id int NOT NULL AUTO_INCREMENT,
   typeID int NOT NULL,
@@ -82,7 +82,7 @@ func TestEmptyTable(t *testing.T) {
 
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
-	a.Router.ServeHTTP(rr, req)
+	mockApp.Router.ServeHTTP(rr, req)
 
 	return rr
 }
@@ -130,7 +130,7 @@ func addDatabase(count int) {
 
 	for i := 0; i < count; i++ {
 		statement := fmt.Sprintf("INSERT INTO dbs(typeID,name,ip,dbPort)VALUES(%d,'%s','%s', %d)", 1, ("DB" + strconv.Itoa(i)), ("IP" + strconv.Itoa(i)), (8000 + i))
-		a.DB.Exec(statement)
+		mockApp.DB.Exec(statement)
 	}
 }
 

@@ -1,0 +1,5 @@
+FROM scratch
+ADD dbaas-rest-api /
+EXPOSE 8080
+HEALTHCHECK --interval=5s --timeout=3s CMD ["/location-service","-isHealthy"]
+ENTRYPOINT ["/dbaas-rest-api"]

@@ -1,0 +1,65 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"path": "appengine/cloudsql",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "5paEOrPNmte9PRyvpBF8HTDjQD4=",
+			"path": "github.com/globalsign/mgo",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
+			"checksumSHA1": "zdy6XflmESAiFmyptSqpUMfXSyo=",
+			"path": "github.com/globalsign/mgo/bson",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
+			"checksumSHA1": "//bXQG4HblBwxHJDIW/PklXAxu0=",
+			"path": "github.com/globalsign/mgo/internal/json",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
+			"checksumSHA1": "loubUcDO2QAStKIlVd7DqSeoEaw=",
+			"path": "github.com/globalsign/mgo/internal/sasl",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
+			"checksumSHA1": "xjfEsfN7ho6dDOVeUQJhW4KzD2I=",
+			"path": "github.com/globalsign/mgo/internal/scram",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
+			"checksumSHA1": "k9izYoyobR8Upb3Yjsw9htgE/Mk=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "99ff426eb706cffe92ff3d058e168b278cabf7c7",
+			"revisionTime": "2018-07-19T07:19:42Z"
+		},
+		{
+			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
+			"path": "github.com/gorilla/context",
+			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",
+			"revisionTime": "2016-08-17T18:46:32Z"
+		},
+		{
+			"checksumSHA1": "STQSdSj2FcpCf0NLfdsKhNutQT0=",
+			"path": "github.com/gorilla/mux",
+			"revision": "e48e440e4c92e3251d812f8ce7858944dfa3331c",
+			"revisionTime": "2018-08-07T07:52:56Z"
+		},
+		{
+			"checksumSHA1": "LiyXfqOzaeQ8vgYZH3t2hUEdVTw=",
+			"path": "google.golang.org/appengine/cloudsql",
+			"revision": "4216e58b9158e5f1c906f1aca75162a46a2ec88a",
+			"revisionTime": "2018-07-31T16:49:58Z"
+		}
+	],
+	"rootPath": "github.com/dbaas-rest-api"
+}

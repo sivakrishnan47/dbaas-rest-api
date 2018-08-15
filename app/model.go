@@ -3,8 +3,11 @@
 package app
 
 import (
-	"fmt"
 	"database/sql"
+	"fmt"
+
+	"github.com/globalsign/mgo"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type dataBase struct {
@@ -52,4 +55,34 @@ func getDatabases(db *sql.DB) ([]dataBase, error) {
 	}
 
 	return databases, nil
+}
+
+func mgetDatabases(session *mgo.Session) ([]dataBase, error) {
+	var databases []dataBase
+	mongoDatabaseNames, err := session.DatabaseNames()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, value := range mongoDatabaseNames {
+		db := dataBase{}
+		db.Database = value
+		databases = append(databases, db)
+	}
+	return databases, nil
+}
+
+func (u *dataBase) mcreateDatabase(session *mgo.Session) error {
+	mcollection := session.DB(u.Database).C("test")
+	var mockInterface interface{}
+	mcollection.Upsert(bson.M{"test": "test"}, mockInterface)
+	return nil
+}
+
+func (u *dataBase) mDeleteDatabase(session *mgo.Session) error {
+	var mgoDelete mgo.Database
+	mgoDelete.Session = session
+	mgoDelete.Name = u.Database
+	err := mgoDelete.DropDatabase()
+	return err
 }
