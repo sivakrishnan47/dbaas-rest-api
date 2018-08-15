@@ -19,12 +19,12 @@ import (
 var mockApp app.App
 
 func TestMain(m *testing.M) {
-
-	ensureTableExists()
+	mockApp.Initialize("root", "", "", "mongodb://127.0.0.1:27017", 0)
+	// ensureTableExists()
 
 	code := m.Run()
 
-	clearTable()
+	// clearTable()
 
 	os.Exit(code)
 }
@@ -153,4 +153,41 @@ func TestDeleteDatabase(t *testing.T) {
 
 	checkResponseCode(t, http.StatusOK, response.Code)
 
+}
+
+func TestGetDatabaseMongo(t *testing.T) {
+	request, err := http.NewRequest("GET", "/mdb", nil)
+	if err != nil {
+		t.Errorf("Unable to create new HTTP request %s", err.Error())
+	}
+
+	response := executeRequest(request)
+	if response.Code != http.StatusOK {
+		t.Errorf("Expected 200 response")
+	}
+}
+
+func TestCreateDatabaseMongo(t *testing.T) {
+	payload := []byte(`{"database":"test"}`)
+	request, err := http.NewRequest("GET", "/mdb", bytes.NewBuffer(payload))
+	if err != nil {
+		t.Errorf("Unable to create new HTTP request %s", err.Error())
+	}
+
+	response := executeRequest(request)
+	if response.Code != http.StatusOK {
+		t.Errorf("Expected 200 response")
+	}
+}
+func TestDeleteDatabaseMongo(t *testing.T) {
+	TestCreateDatabaseMongo(t)
+	request, err := http.NewRequest("DELETE", "/mdb/test", nil)
+	if err != nil {
+		t.Errorf("Unable to create new HTTP request %s", err.Error())
+	}
+
+	response := executeRequest(request)
+	if response.Code != http.StatusOK {
+		t.Errorf("Expected 200 response")
+	}
 }
