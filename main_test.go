@@ -168,14 +168,14 @@ func TestGetDatabaseMongo(t *testing.T) {
 }
 
 func TestCreateDatabaseMongo(t *testing.T) {
-	payload := []byte(`{"database":"test"}`)
-	request, err := http.NewRequest("GET", "/mdb", bytes.NewBuffer(payload))
+	payload := []byte(`[{"database":"test"}]`)
+	request, err := http.NewRequest("POST", "/mdb", bytes.NewBuffer(payload))
 	if err != nil {
 		t.Errorf("Unable to create new HTTP request %s", err.Error())
 	}
 
 	response := executeRequest(request)
-	if response.Code != http.StatusOK {
+	if response.Code != http.StatusCreated {
 		t.Errorf("Expected 200 response")
 	}
 }
