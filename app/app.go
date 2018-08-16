@@ -34,10 +34,12 @@ func (a *App) Initialize(user, password, dbname string, mongoHost string, mongoT
 	// }
 
 	//Initializing mongo connection
+	log.Println("mongo init")
 	a.msession, mErr = newSession(mongoHost, mongoTimeout)
 	if mErr != nil {
 		log.Fatal(err)
 	}
+	log.Println("after mongo initialize")
 	//a.DB, err = sql.Open("mysql", connectionString)
 	//if err != nil {
 	//	log.Fatal(err)
